@@ -32,6 +32,7 @@ class TestEngine(
 
                     TestType.WORD_TO_READING, TestType.READING_TO_WORD -> db.getWordView(getKnowledgeType(testType), withKanaAlone = false)
                     TestType.WORD_TO_MEANING, TestType.MEANING_TO_WORD -> db.getWordView(getKnowledgeType(testType))
+                    TestType.READING_TO_MEANING, TestType.MEANING_TO_READING -> db.getWordView(getKnowledgeType(testType))
                 }
     }
 
