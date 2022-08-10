@@ -79,7 +79,8 @@ fun getItemType(testType: TestType) =
 enum class KnowledgeType(val value: Int) {
     Reading(1),
     Meaning(2),
-    Strokes(3);
+    Strokes(3),
+    Speaking(4);
 
     companion object {
         private val map = values().associateBy(KnowledgeType::value)
@@ -92,14 +93,15 @@ fun getKnowledgeType(testType: TestType) =
             TestType.HIRAGANA_TO_ROMAJI, TestType.HIRAGANA_TO_ROMAJI_TEXT, TestType.ROMAJI_TO_HIRAGANA,
             TestType.KATAKANA_TO_ROMAJI, TestType.KATAKANA_TO_ROMAJI_TEXT, TestType.ROMAJI_TO_KATAKANA,
             TestType.KANJI_TO_READING, TestType.READING_TO_KANJI,
-            TestType.WORD_TO_READING, TestType.READING_TO_WORD,
-            TestType.READING_TO_MEANING-> KnowledgeType.Reading
+            TestType.WORD_TO_READING, TestType.READING_TO_WORD -> KnowledgeType.Reading
 
             TestType.HIRAGANA_DRAWING, TestType.KATAKANA_DRAWING, TestType.KANJI_DRAWING, TestType.KANJI_COMPOSITION -> KnowledgeType.Strokes
 
             TestType.KANJI_TO_MEANING, TestType.MEANING_TO_KANJI,
-            TestType.WORD_TO_MEANING, TestType.MEANING_TO_WORD,
-            TestType.MEANING_TO_READING-> KnowledgeType.Meaning
+            TestType.WORD_TO_MEANING, TestType.MEANING_TO_WORD -> KnowledgeType.Meaning
+
+            TestType.MEANING_TO_READING,
+            TestType.READING_TO_MEANING -> KnowledgeType.Speaking
         }
 
 fun itemAndKnowledgeTypeToTestType(itemType: ItemType, knowledgeType: KnowledgeType): List<TestType> =
@@ -107,13 +109,13 @@ fun itemAndKnowledgeTypeToTestType(itemType: ItemType, knowledgeType: KnowledgeT
         ItemType.Hiragana ->
             when (knowledgeType) {
                 KnowledgeType.Reading -> listOf(TestType.HIRAGANA_TO_ROMAJI, TestType.HIRAGANA_TO_ROMAJI_TEXT, TestType.ROMAJI_TO_HIRAGANA)
-                KnowledgeType.Meaning -> throw RuntimeException("invalid itemType/knowledgeType combination ($itemType, $knowledgeType)")
+                KnowledgeType.Meaning,KnowledgeType.Speaking -> throw RuntimeException("invalid itemType/knowledgeType combination ($itemType, $knowledgeType)")
                 KnowledgeType.Strokes -> listOf(TestType.HIRAGANA_DRAWING)
             }
         ItemType.Katakana ->
             when (knowledgeType) {
                 KnowledgeType.Reading -> listOf(TestType.KATAKANA_TO_ROMAJI, TestType.KATAKANA_TO_ROMAJI_TEXT, TestType.ROMAJI_TO_KATAKANA)
-                KnowledgeType.Meaning -> throw RuntimeException("invalid itemType/knowledgeType combination ($itemType, $knowledgeType)")
+                KnowledgeType.Meaning,KnowledgeType.Speaking -> throw RuntimeException("invalid itemType/knowledgeType combination ($itemType, $knowledgeType)")
                 KnowledgeType.Strokes -> listOf(TestType.KATAKANA_DRAWING)
             }
         ItemType.Kanji ->
@@ -121,11 +123,13 @@ fun itemAndKnowledgeTypeToTestType(itemType: ItemType, knowledgeType: KnowledgeT
                 KnowledgeType.Reading -> listOf(TestType.KANJI_TO_READING, TestType.READING_TO_KANJI)
                 KnowledgeType.Meaning -> listOf(TestType.KANJI_TO_MEANING, TestType.MEANING_TO_KANJI)
                 KnowledgeType.Strokes -> listOf(TestType.KANJI_DRAWING, TestType.KANJI_COMPOSITION)
+                KnowledgeType.Speaking -> throw RuntimeException("invalid itemType/knowledgeType combination ($itemType, $knowledgeType)")
             }
         ItemType.Word ->
             when (knowledgeType) {
                 KnowledgeType.Reading -> listOf(TestType.WORD_TO_READING, TestType.READING_TO_WORD)
                 KnowledgeType.Meaning -> listOf(TestType.WORD_TO_MEANING, TestType.MEANING_TO_WORD)
+                KnowledgeType.Speaking -> listOf(TestType.MEANING_TO_READING, TestType.READING_TO_MEANING)
                 KnowledgeType.Strokes -> throw RuntimeException("invalid itemType/knowledgeType combination ($itemType, $knowledgeType)")
             }
     }
